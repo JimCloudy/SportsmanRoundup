@@ -4,59 +4,35 @@ $mysql_host = "mysql5.000webhost.com";
 $mysql_database = "a3940063_roundup";
 $mysql_user = "a3940063_cloudy";
 $mysql_password = "6doubles";
-if(!$_SESSION['username']){
+if($_SESSION['username']){
 	header('Location: Events.html');
 }
 ?>
 <html>
 	<head>
 		<title>Sportsman Roundup: Add an Event</title>
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-    	<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
-    	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-    	<script src="jquery-ui-timepicker-addon.js"></script>
-    	<script src="jquery-ui-sliderAccess.js"></script>
-    	<link rel="stylesheet" href="jquery-ui-timepicker-addon.css"/>
-    	<script>
-    		$(function() {
-        		$( "#datepicker" ).datepicker({
-            		showOn: "button",
-		            buttonImage: "/images/calendar-blue.GIF",
-        	    	buttonImageOnly: true,
-        	    	minDate:0
-        		});
-        		$('#timepicker').timepicker({
-        			showOn: "button",
-        			pickerTimeFormat:"hh:mm tt",
-        			timeFormat: "hh:mm tt",
-        			buttonImage: "/images/clock-blue.png",
-        			buttonImageOnly: true
-        		});
-        		
-    		});
-    		String.prototype.Trim = function(){
+		<script>
+		String.prototype.Trim = function(){
     			return this.replace(/^\s+|\s+$/g,"");
-    		}
-    		function validate(){
-    			var errorFields = new Array();
-    			var errors = new Array();
-    			var pageError = false;
-    			var inputs = document.formEvent.getElementsByTagName("input");
-    			for(x=0;x<inputs.length;x++){
-    				var input = inputs[x].value.Trim();
-    				if(!inputs[x].name=="location"){
-    					if(input==""){
-    						errors.push(inputs[x].name.substr(0,1).toUpperCase() + inputs[x].name.substr(1) + " cannot be blank");
-    						pageError = true;
-    					}
-    				}
-    			}
-    			input = document.formEvent.state.value.Trim();
-    			if(input==""){
-    				errors.push("State cannot be blank");
-    				pageError = true;
-    			}
-    			if(pageError){
+    	}
+		function validate(){
+			var errors = new Array();
+			var pageError = false;
+			var input = document.user.userName.value.Trim();
+			if(input==""){
+				errors.push("User Name cannot be blank");
+				pageError=true;
+			}
+			input = document.user.userPassword.value.Trim();
+			if(input==""){
+				errors.push("Password cannot be blank");
+				pageError=true;
+			}
+			if(document.user.userPassword.value!=document.user.userConfirm.value){
+				errors.push("Password Confirm does not match Password");
+				pageError=true;
+			}
+			if(pageError){
     				var errDiv = document.getElementById("error_explanation");
     				errDiv.innerHTML="";
     				errDiv.style.display="";
@@ -74,14 +50,10 @@ if(!$_SESSION['username']){
     				errDiv.appendChild(listElement);
     			}
     			else{
-    				document.formEvent.submit();
+    				document.user.submit();
     			}
-
-    		}
-    		function formSubmit(){
-
-    		}
-    	</script>
+		}
+		</script>
 		<style>
 			#header{
 				width:100%;
@@ -105,7 +77,7 @@ if(!$_SESSION['username']){
 			#info, #enter{
 				text-align: center;
 			}
-			#event{
+			#userSignUp{
 				display:-webkit-box;
 				-webkit-box-orient:horizontal;
 				-webkit-box-pack:center;
@@ -120,9 +92,9 @@ if(!$_SESSION['username']){
 			#header img{
 				height:6.25em;
 			}
-			#event label{
+			#userSignUp label{
 				display:inline-block;
-				width:6.25em;
+				width:7em;
 				font-size:1.25em;
 			}
 			#enter{
@@ -159,7 +131,7 @@ if(!$_SESSION['username']){
 			#error_explanation ul li {    
 			  font-size: 12px;            
 			  list-style: square;         
-			}                                                    
+			}              
 			.shadowArea{
 				margin:0 auto;
 				width:78%;
@@ -197,55 +169,20 @@ if(!$_SESSION['username']){
 			<div id="roundup">
 				<img src="/images/roundup.jpg"/><h1>SPORTSMAN ROUNDUP</h1>
 				<br>
-				<span id="siteLinks"><a href="Events.html">Events</a><a href="UserEvents.html">My Events</a><a href="signOut.php">Sign Out</a></span>
+				<span id="siteLinks"><a href="Events.html">Events</a><a href="SignIn.html">Sign In</a></span>
 			</div>
 		</div>
 		<div id="content">
 			<div id="error_explanation" style="display:none;">
 			</div>
-			<div id="info" class="shadowArea">
-				<?php
-					echo (($_SESSION['success'])? "<p>Your event was added.</p>":"");
-					unset($_SESSION['success']);
-				?>
-				<p>Enter your event in the following form.</p>
-			</div>
-
-			<br><br>
-
-			<div id="event" class="shadowArea">
-				<form name="formEvent" action="addUserEvent.php" method="post">
-					<label>Name of Event</label><input size="50" name="event"><br><br>
-					<label>Date of Event</label><input size="10" name="date" id="datepicker" value=""><br><br>
-					<label>Time of Event</label><input size="10" name="time" id="timepicker" value=""><br><br>
-					<label>Location of Event</label><input size="50" name="location"><br><br>
-					<label>City</label><input size="25" name="city">&nbsp;<label>State</label>
-						<span class="select">
-							<select name="state">
-								<option value=""></option>
-								<?php
-									$con = mysql_connect($mysql_host,$mysql_user,$mysql_password);
-									mysql_select_db($mysql_database,$con);
-									$result = mysql_query("SELECT * FROM states");
-									while($row = mysql_fetch_array($result))
-									{
-										echo "<option value=" . $row['abbr'] .">" . $row['abbr'] . "</option>";
-									}
-									mysql_close($con);
-									?>
-							</select>
-						</span>
-					<br><br>
-					<label>Website of Event</label><input size="50" name="website"><br>
+			<div id="userSignUp" class="shadowArea">
+				<form name="user" action="addUser.php" method="POST">
+					<label>User Name</label><input name="userName"></br>
+					<label>Password</label><input name="userPassword" type="password"><br>
+					<label>Confirm Password</label><input name="userConfirm" type="password"><br>
+					<input type="button" name="userSubmit" value="Sign Up" onclick="validate()"><input type="button" name="userCancel" value="Cancel" onclick="location.href='Events.html'">
 				</form>
 			</div>
-
-			<br><br><br><br>
-
-			<div id="enter" class="shadowArea">
-				<input type="button" id="add" name="add" value="Add Event" onClick="validate()"> <input type="button" id="cancel" name="cancel" value="Cancel">
-			</div>
-
 			<div id="footer">
 				<h6>2012 A Postmaster Production</h6>
 			</div>
