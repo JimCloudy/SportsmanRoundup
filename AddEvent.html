@@ -4,7 +4,7 @@ $mysql_host = "mysql5.000webhost.com";
 $mysql_database = "a3940063_roundup";
 $mysql_user = "a3940063_cloudy";
 $mysql_password = "6doubles";
-if(!$_SESSION['username']){
+if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 	header('Location: Events.html');
 }
 ?>
@@ -12,7 +12,7 @@ if(!$_SESSION['username']){
 	<head>
 		<title>Sportsman Roundup: Add an Event</title>
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-    	<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
     	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     	<script src="script/jquery-ui-timepicker-addon.js"></script>
     	<script src="script/jquery-ui-sliderAccess.js"></script>

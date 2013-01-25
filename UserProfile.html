@@ -4,16 +4,14 @@ $mysql_host = "mysql5.000webhost.com";
 $mysql_database = "a3940063_roundup";
 $mysql_user = "a3940063_cloudy";
 $mysql_password = "6doubles";
-if(!$_SESSION['username']){
+if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 	header('Location: Events.html');
 }
 ?>
 <html>
 	<head>
 		<title>List of Events</title>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-		<link rel="stylesheet" href="/style/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
-		<script type="text/javascript" src="/script/jquery.fancybox.pack.js?v=2.1.4"></script>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script>
 		function getHTTPObject(){
    			if (window.ActiveXObject){
@@ -23,14 +21,15 @@ if(!$_SESSION['username']){
        			return new XMLHttpRequest();
        		}
        	}
-       	function editEvent(event){
-       		$.fancybox.open([
-				{
-        			href : '#eventEntry',
-    			}], 
-				{
-					padding:0   
-				});
+       	function editEvent(event,action){
+       		if(action=="edit"){
+       			document.getElementById("show"+event).style.display="none";
+       			document.getElementById("edit"+event).style.display="";
+       		}
+       		else{
+	       		document.getElementById("edit"+event).style.display="none";
+	       		document.getElementById("show"+event).style.display="";
+	       	}
        	}
 		function removeEvent(event){
 			httpObject = getHTTPObject();
@@ -231,9 +230,16 @@ if(!$_SESSION['username']){
 						$beg=false;
 						?>
 						<div id="div<?php echo $row[Event_Id];?>">
-							<span class="eventName"><?php echo $row[Event_Name]; ?></span><span class="eventChange"><input type="button" value="Edit" onclick="editEvent(<?php echo $row[Event_Id]; ?>)"><input type="button" value="Remove" onclick="removeEvent(<?php echo $row[Event_Id]; ?>)"></span><br>
-							<span class="eventDate"><?php echo date('n/d/Y',strtotime($row[Event_Date])); ?></span><span class="eventTime"><?php echo $row[Event_Time]; ?></span><br>
-							<span class="eventCityState"><?php echo $row[Event_City] ."," . $row[Event_State]; ?></span><?php echo ((!empty($row[Event_Location]))? "<span class=\"eventLocation\">Location:$row[Event_Location]</span>":"") ?><br>
+							<div id="show<?php echo $row[Event_Id];?>" style="border:none;">
+								<span class="eventName"><?php echo $row[Event_Name]; ?></span><span class="eventChange"><input type="button" value="Edit" onclick="editEvent(<?php echo $row[Event_Id]; ?>,'edit')"><input type="button" value="Remove" onclick="removeEvent(<?php echo $row[Event_Id]; ?>)"></span><br>
+								<span class="eventDate"><?php echo date('n/d/Y',strtotime($row[Event_Date])); ?></span><span class="eventTime"><?php echo $row[Event_Time]; ?></span><br>
+								<span class="eventCityState"><?php echo $row[Event_City] ."," . $row[Event_State]; ?></span><?php echo ((!empty($row[Event_Location]))? "<span class=\"eventLocation\">Location:$row[Event_Location]</span>":"") ?><br>
+							</div>
+							<div id="edit<?php echo $row[Event_Id];?>" style="border:none; display:none;">
+								<span class="eventName">Event:<input value="<?php echo $row[Event_Name]; ?>"></span><span class="eventChange"><input type="button" value="OK" onclick="editEvent(<?php echo $row[Event_Id]; ?>,'ok')"></span><br><br>
+								<span class="eventDate">Date:<input value="<?php echo date('n/d/Y',strtotime($row[Event_Date])); ?>"></span><span class="eventTime">Time:<input value="<?php echo $row[Event_Time]; ?>"></span><br><br>
+								<span class="eventCityState">City:<input value="<?php echo $row[Event_City]; ?>">State:<input value="<?php echo $row[Event_State]; ?>"></span><?php echo ((!empty($row[Event_Location]))? "<span class=\"eventLocation\">Location:<input value=\"$row[Event_Location]\"></span>":"") ?><br>
+							</div>
 						</div>
 					<?php
 					}
