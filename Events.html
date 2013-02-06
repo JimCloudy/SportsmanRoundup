@@ -109,13 +109,13 @@ $mysql_password = "6doubles";
 					mysql_select_db($mysql_database,$con);
 					$query = "SELECT * FROM events WHERE Event_Date >='" . date('Y-m-d') . "' ORDER BY Event_Date";
 					$result = mysql_query($query);
-					$curMonth = "January";
 					$beg = true;
 					while($row = mysql_fetch_array($result))
 					{
 						if($beg){
 							$beg = false;
 							echo '<div class="shadowArea">';
+							$curMonth = date('F',strtotime($row[Event_Date]));
 							echo "<h3>$curMonth</h3>";
 						}
 						else if(date('F',strtotime($row[Event_Date]))!=$curMonth){

@@ -288,6 +288,85 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 				</div>
 			</div>
 
+			<div id="event" class="shadowArea" style="display:none;">
+				<form name="formEvent" action="addUserEvent.php" method="post">
+					<div class="form_wrapper">
+						<fieldset>
+							<label class="w75 inputselect" for="event">
+								<span class="wrapper">
+									<span class="title">Name of Event</span>
+							   	     <input class="field" name="event">
+								</span>
+							</label>
+
+							<div class="clear"></div>
+							
+							<label class="w25 inputselect" for="date">
+								<span class="wrapper">
+									<span class="title">Date</span>
+									<input class="field" size="10" name="date" id="datepicker" readonly="readonly" value="">
+								</span>
+							</label>
+
+							<div class="clear"></div>
+							
+							<label class="w25 inputselect" for="time">
+								<span class="wrapper">
+									<span class="title">Time</span>
+									<input class="field" size="10" name="time" readonly="readonly" id="timepicker" value="">
+								</span>
+							</label>
+
+							<div class="clear"></div>
+
+							<label class="w75 inputselect" for="location">
+								<span class="wrapper">
+									<span class="title">Location</span>
+									<input class="field" size="50" name="location">
+								</span>
+							</label>
+
+							<div class="clear"></div>
+
+							<label class="w50 inputselect" for="city">
+								<span class="wrapper">
+									<span class="title">City</span>
+									<input class="field" size="25" name="city">
+								</span>
+							</label>
+
+							<label class="w10 inputselect" for="state">
+								<span class="wrapper">
+									<span class="title">State</span>
+									<select class="field" name="state">
+										<option value=""></option>
+										<?php
+											$con = mysql_connect($mysql_host,$mysql_user,$mysql_password);
+											mysql_select_db($mysql_database,$con);
+											$result = mysql_query("SELECT * FROM states");
+											while($row = mysql_fetch_array($result))
+											{
+												echo "<option value=" . $row['abbr'] .">" . $row['abbr'] . "</option>";
+											}
+											mysql_close($con);
+											?>
+									</select>
+								</span>
+							</label>
+
+							<div class="clear"></div>
+
+							<label class="w75 inputselect" for="website">
+								<span class="wrapper">
+									<span class="title">Website</span>
+									<input class="field" size="50" name="website">
+								</span>
+							</label>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+
 			<div id="footer">
 				<h6>2012 A Postmaster Production</h6>
 			</div>
