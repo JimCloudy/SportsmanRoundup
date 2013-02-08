@@ -1,0 +1,142 @@
+<?php
+session_start();
+$mysql_host = "mysql5.000webhost.com";
+$mysql_database = "a3940063_roundup";
+$mysql_user = "a3940063_cloudy";
+$mysql_password = "6doubles";
+?>
+<html>
+	<head>
+		<title>List of Events</title>
+		<style>
+			#header{
+				width:100%;
+				margin:0 auto;
+				margin-bottom: 100px;
+				border-bottom:solid;
+				border-color:black;
+				background:#5C8533;
+				color:white;
+			}
+			#roundup{
+				max-width:56.25em;
+				margin:0 auto;
+			}
+			#content{
+				max-width:56.25em;
+				margin:0px auto;
+				padding:0 1em;
+			
+			}
+			#footer{
+				position:relative;
+				bottom:0;
+				margin-top:100px;
+				text-align:right;
+			}
+			#header img{
+				height:6.25em;
+			}
+			#siteLinks a{
+				margin-left: 15px;
+			}
+			.shadowArea div{
+				position: relative;
+				border-bottom:black solid;
+			}
+			.shadowArea div:hover{
+				background: #9D968F;
+			}
+			.shadowArea h3{
+				color:white;
+			}
+			.shadowArea{
+				margin:0 auto;
+				margin-bottom: 25px;
+				width:78%;
+				background:#E0D6CC;
+				border-radius:25px;
+				padding:1em 1em;
+				box-shadow: -10px 10px 5px #888888;
+			}
+			.eventName{
+				color: #5C8533;
+				font-size: 1.56em;
+			}
+			.eventLocation{
+				position: absolute;
+				right: 0em;
+				font-size: 1.25em;
+			}
+			.eventCityState{
+				font-size: 1.25em;
+			}
+			.eventDate{
+				position: absolute;
+				left: 0em;
+				font-size: 1.25em;
+			}
+			.eventTime{
+				position: absolute;
+				right: 0em;
+				font-size: 1.25em;
+			}
+			.eventWebsite{
+				font-size: 1.25em;
+			}
+			body{
+				height: 100%;
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			h1{
+				display:inline;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<div id="roundup">
+				<img src="/images/roundup.jpg"/><h1>SPORTSMAN ROUNDUP</h1>
+				<br>
+				<span id="siteLinks"><?php if(!$_SESSION['username']){?><a href="SignUp.html">Sign Up</a><a href="SignIn.html">Sign In</a><?php }?><?php if($_SESSION['username']){?><a href="AddEvent.html">Add Event</a><a href="UserProfile.html">My Profile</a><a href="signOut.php">Sign Out</a><?php }?></span>
+			</div>
+		</div>
+		<div id="content">
+				<?php
+					$con = mysql_connect($mysql_host,$mysql_user,$mysql_password);
+					mysql_select_db($mysql_database,$con);
+					$query = "SELECT * FROM events WHERE Event_Date >='" . date('Y-m-d') . "' ORDER BY Event_Date";
+					$result = mysql_query($query);
+					$curMonth = "January";
+					$beg = true;
+					while($row = mysql_fetch_array($result))
+					{
+						if($beg){
+							$beg = false;
+							echo '<div class="shadowArea">';
+							echo "<h3>$curMonth</h3>";
+						}
+						else if(date('F',strtotime($row[Event_Date]))!=$curMonth){
+							echo '</div><div class="shadowArea">';
+							$curMonth = date('F',strtotime($row[Event_Date]));
+							echo "<h3>$curMonth</h3>";
+						}
+						echo "<div onclick=\"location.href='http://$row[Event_Website]'\">
+						<span class=\"eventName\">$row[Event_Name]</span><br>
+						<span class=\"eventDate\">" . date('n/d/Y',strtotime($row[Event_Date])) . "</span><span class=\"eventTime\">$row[Event_Time]</span><br>
+						<span class=\"eventCityState\">$row[Event_City],$row[Event_State]</span>" . ((!empty($row[Event_Location]))?"<span class=\"eventLocation\">Location:$row[Event_Location]</span>":"") . 
+						"<br></div>";
+					}
+					mysql_close($con);
+					if(!$beg){
+						echo "</div>";
+					}
+				?>
+			<div id="footer">
+				<h6>2012 A Postmaster Production</h6>
+			</div>
+		</div>
+	</body>
+</html>

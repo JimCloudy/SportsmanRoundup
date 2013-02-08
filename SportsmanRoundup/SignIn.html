@@ -1,0 +1,197 @@
+<?php
+session_start();
+$mysql_host = "mysql5.000webhost.com";
+$mysql_database = "a3940063_roundup";
+$mysql_user = "a3940063_cloudy";
+$mysql_password = "6doubles";
+if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
+	header('Location: Events.html');
+}
+?>
+<html>
+	<head>
+		<title>Sportsman Roundup: Add an Event</title>
+		<script>
+		String.prototype.Trim = function(){
+    			return this.replace(/^\s+|\s+$/g,"");
+    	}
+		function validate(){
+			var errors = new Array();
+			var pageError = false;
+			var input = document.user.userName.value.Trim();
+			if(input==""){
+				errors.push("User Name cannot be blank");
+				pageError=true;
+			}
+			input = document.user.userPassword.value.Trim();
+			if(input==""){
+				errors.push("Password cannot be blank");
+				pageError=true;
+			}
+			if(pageError){
+    				var errDiv = document.getElementById("error_explanation");
+    				errDiv.innerHTML="";
+    				errDiv.style.display="";
+    				var element = document.createElement("h2");
+    				element.innerHTML = "There " + ((errors.length==1)?"is ":"are ") + errors.length + ((errors.length==1)?" error":" errors");
+    				errDiv.appendChild(element);
+    				element = document.createElement("br");
+    				errDiv.appendChild(element);
+    				var listElement = document.createElement("ul");
+    				for(x=0;x<errors.length;x++){
+    					element = document.createElement("li");
+    					element.innerHTML=errors[x];
+    					listElement.appendChild(element);
+    				}
+    				errDiv.appendChild(listElement);
+    			}
+    			else{
+    				document.user.submit();
+    			}
+		}
+		</script>
+		<style>
+			#header{
+				width:100%;
+				margin:0 auto;
+				margin-bottom: 100px;
+				border-bottom:solid;
+				border-color:black;
+				background:#5C8533;
+				color:white;
+			}
+			#roundup{
+				max-width:56.25em;
+				margin:0 auto;
+			}
+			#content{
+				max-width:56.25em;
+				margin:0px auto;
+				padding:0 1em;
+			
+			}
+			#info, #enter{
+				text-align: center;
+			}
+			#userSignUp{
+				display:-webkit-box;
+				-webkit-box-orient:horizontal;
+				-webkit-box-pack:center;
+				-webkit-box-align:center;
+			}
+			#footer{
+				position:relative;
+				bottom:0;
+				margin-top:50px;
+				text-align:right;
+			}
+			#header img{
+				height:6.25em;
+			}
+			#userSignUp label{
+				margin-right: 1em;
+				display:inline-block;
+				width:5em;
+				font-size:1.25em;
+				text-align: right;
+			}
+			#enter{
+				width:50%;
+			}
+			#add, #cancel{
+				width:100px;
+				background-color:#FCFBFA;
+			}
+			#error_explanation {
+				margin-left:11%;
+				margin-bottom:20px;
+  				width: 400px;                  
+  				border: 2px solid red;         
+  				padding: 7px;  
+  				padding-bottom: 12px;          
+  				background-color: #ECE6E0; 
+  				box-shadow: -10px 10px 5px #888888;    
+			}         
+			#error_explanation h2 {       
+			  	text-align: left;           
+			  	font-weight: bold;          
+				padding: 5px 5px 5px 15px;  
+				font-size: 12px;            
+				margin: -7px;               
+				background-color: #CC3300;  
+				color: #fff;                
+			}                              
+			#error_explanation p {        
+			  color: #333;                
+			  margin-bottom: 0;           
+			  padding: 5px;               
+			}                             
+			#error_explanation ul li {    
+			  font-size: 12px;            
+			  list-style: square;         
+			}              
+			.shadowArea{
+				margin:0 auto;
+				width:78%;
+				background:#E0D6CC;
+				border-radius:25px;
+				padding:1em 1em;
+				box-shadow: -10px 10px 5px #888888;
+			}
+			.error{
+				color:#CC3300;
+			}
+			#siteLinks a{
+				margin-left: 15px;
+			}
+			body{
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			h6,form,h1{
+				display:inline;
+			}
+			input,select,span.select{
+				-webkit-border-radius:5px; 
+   				-moz-border-radius:5px; 
+   				border-radius:5px; 
+   				-webkit-box-shadow:-5px 5px 5px #9D968F; 
+   				-moz-box-shadow:-5px 5px 5px #9D968F; 
+   				box-shadow:-5px 5px 5px #9D968F; 
+			}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<div id="roundup">
+				<img src="/images/roundup.jpg"/><h1>SPORTSMAN ROUNDUP</h1>
+				<br>
+				<span id="siteLinks"><a href="Events.html">Events</a><a href="SignUp.html">Sign Up</a></span>
+			</div>
+		</div>
+		<div id="content">
+			<div id="error_explanation" <?php if(!$_SESSION['error']){ ?>style="display:none;"<?php } ?>>
+				<?php if($_SESSION['error']){ ?>
+				<h2>There is 1 error</h2>
+				<br>
+				<ul>
+					<li><?php echo $_SESSION['error'];?></li>
+				</ul>
+				<?php } unset($_SESSION['error']); ?>
+			</div>
+			<div id="userSignUp" class="shadowArea">
+				<form name="user" action="signIn.php" method="POST">
+					<label>User Name</label><input name="userName"></br>
+					<label>Password</label><input name="userPassword" type="password"><br>
+				</form>
+				<div style="margin-left:1em;">
+					<input type="button" name="userSubmit" value="Sign In" onclick="validate()" style="margin-left:auto;"><input type="button" name="userCancel" value="Cancel" onclick="location.href='Events.html'">				
+				</div>
+			</div>			
+			<div id="footer">
+				<h6>2012 A Postmaster Production</h6>
+			</div>
+		</div>
+	</body>
+</html>
