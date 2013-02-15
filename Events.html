@@ -126,7 +126,7 @@ $mysql_password = "6doubles";
 						echo "<div onclick=\"location.href='http://$row[Event_Website]'\">
 						<span class=\"eventName\">$row[Event_Name]</span><br>
 						<span class=\"eventDate\">" . date('n/d/Y',strtotime($row[Event_Date])) . "</span><span class=\"eventTime\">$row[Event_Time]</span><br>
-						<span class=\"eventCityState\">$row[Event_City],$row[Event_State]</span>" . ((!empty($row[Event_Location]))?"<span class=\"eventLocation\">Location:$row[Event_Location]</span>":"") . 
+						<span class=\"eventCityState\">$row[Event_City],&nbsp;$row[Event_State]</span>" . ((!empty($row[Event_Location]))?"<span class=\"eventLocation\">Location:&nbsp;$row[Event_Location]</span>":"") . 
 						"<br></div>";
 					}
 					mysql_close($con);

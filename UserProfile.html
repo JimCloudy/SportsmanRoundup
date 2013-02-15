@@ -20,7 +20,10 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
     	<script src="script/jquery-ui-sliderAccess.js"></script>
     	<link rel="stylesheet" href="style/jquery-ui-timepicker-addon.css"/>
 		<script>
+		var eventsJSON;
+
 		$(document).ready(function() {
+		
        		$( "#datepicker" ).datepicker({
            		//showOn: "button",
 	            //buttonImage: "/images/calendar-blue.GIF",
@@ -30,29 +33,53 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 
        		$('#timepicker').timepicker({
        			//showOn: "button",
-       			pickerTimeFormat:"hh:mm tt",
-       			timeFormat: "hh:mm tt",
+       			pickerTimeFormat:"h:mm tt",
+       			timeFormat: "h:mm tt",
        			defaultValue : "12:00 am"
        			//buttonImage: "/images/clock-blue.png",
        			//buttonImageOnly: true
        		});
        		
 			$("#fancy").fancybox({
-				'modal' : true,
+				'scrolling' : 'no',
+				'titleShow' : false,
+				'hideOnOverlayClick' : false,
+				'showCloseButton' : true
+			});
+
+			$("#event").submit(function(e){
+				e.preventDefault();
+				if(validate()==false){
+					$.fancybox.update();
+					stopEvent(e);
+				}
+				$.post("updateEvent.php",$("#event").serialize(),
+					function(data,status){
+						if(status=="success"){
+							document.getElementById("error_explanation").style.display="none";
+							$.fancybox.close();
+							var div = '#div' + $('[name=id]').val();
+							$(div + ' .eventName').text($('[name=event]').val());
+							var d = $('[name=date]').val();
+							if(d[0]=='0'){
+								d = d.slice(1);
+							}
+							$(div + ' .eventDate').text(d);
+							$(div + ' .eventTime').text($('[name=time]').val());
+							$(div + ' .eventCityState').text($('[name=city]').val() + ", " + $('[name=state]').val());
+							$(div + ' .eventLocation').text("Location: " + $('[name=location]').val());
+						}
+						else{
+							alert("nice try");
+						}
+				});
 			});
 			
-			$.getJSON('eventsJSON.php?format=json&callback=?',function(data) {
-				alert('hello');
-				$('#mydata').html(data);
-			}).success(function() { alert("second success"); }).error(function() { alert("error"); });
-
-			$.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?tags=cat&tagmode=any&format=json&jsoncallback=?",
-        function(data){
-          $.each(data.items, function(i,item){
-            $("#cat").attr("src", item.media.m).appendTo("#images");
-            if ( i == 3 ) return false;
-          });
-        });
+			$.getJSON('eventsJSON.php', function(data) {
+				
+				eventsJSON = data;
+				
+			});
 		});
 		function getHTTPObject(){
    			if (window.ActiveXObject){
@@ -62,24 +89,38 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
        			return new XMLHttpRequest();
        		}
        	}
-       	function editEvent(event,action){
-       		if(action=="edit"){
-       			document.getElementById("show"+event).style.display="none";
-       			document.getElementById("edit"+event).style.display="";
-       		}
-       		else{
-	       		document.getElementById("edit"+event).style.display="none";
-	       		document.getElementById("show"+event).style.display="";
-	       	}
+       	function editEvent(eventID){
+       		$.each(eventsJSON.events, function(index, event) {
+       			if(event.Event_Id==eventID){
+       				document.formEvent.id.value=eventID;
+       				document.formEvent.event.value=event.Event_Name;
+       				var d = event.Event_Date.split("-");
+       				var edate = d[1] + "/" + d[2] + "/" + d[0];
+       				document.formEvent.date.value=edate;
+       				document.formEvent.time.value=event.Event_Time;
+       				document.formEvent.location.value=event.Event_Location;
+       				document.formEvent.city.value=event.Event_City;
+       				var options = document.getElementsByTagName("option");
+       				for(var val in options)
+       				{
+       					if(options[val].value==event.Event_State)
+       					{
+       						options[val].selected=true;
+       					}
+       				}
+					document.formEvent.website.value=event.Event_Website;       				
+       				return false;	
+				}
+    		});
        	}
 		function removeEvent(event){
 			httpObject = getHTTPObject();
 			if(httpObject!=null){
 				var params =  "event=" + event;
-				httpObject.open("POST","removeUserEvent.php",true);
+				httpObject.open("POST","removeEvent.php",true);
 				httpObject.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-				httpObject.setRequestHeader("Content-length",params.length);
-				httpObject.setRequestHeader("Connection","close");
+				//httpObject.setRequestHeader("Content-length",params.length);
+				//httpObject.setRequestHeader("Connection","close");
 				httpObject.onreadystatechange = function() {//Call a function when the state changes.
 					if(httpObject.readyState == 4 && httpObject.status == 200) {
 						var response = httpObject.responseText.split("|");
@@ -100,6 +141,47 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 				httpObject.send(params);
 			}
 		}
+		String.prototype.Trim = function(){
+    			return this.replace(/^\s+|\s+$/g,"");
+    	}
+		function validate(){
+    			var errorFields = new Array();
+    			var errors = new Array();
+    			var pageError = false;
+    			var inputs = document.formEvent.getElementsByTagName("input");
+    			for(x=0;x<inputs.length;x++){
+    				var input = inputs[x].value.Trim();
+    				if(inputs[x].name!="location"){
+    					if(input==""){
+    						errors.push(inputs[x].name.substr(0,1).toUpperCase() + inputs[x].name.substr(1) + " cannot be blank");
+    						pageError = true;
+    					}
+    				}
+    			}
+    			input = document.formEvent.state.value.Trim();
+    			if(input==""){
+    				errors.push("State cannot be blank");
+    				pageError = true;
+    			}
+    			if(pageError){
+    				var errDiv = document.getElementById("error_explanation");
+    				errDiv.innerHTML="";
+    				errDiv.style.display="";
+    				var element = document.createElement("h2");
+    				element.innerHTML = "There " + ((errors.length==1)?"is ":"are ") + errors.length + ((errors.length==1)?" error":" errors");
+    				errDiv.appendChild(element);
+    				element = document.createElement("br");
+    				errDiv.appendChild(element);
+    				var listElement = document.createElement("ul");
+    				for(x=0;x<errors.length;x++){
+    					element = document.createElement("li");
+    					element.innerHTML=errors[x];
+    					listElement.appendChild(element);
+    				}
+    				errDiv.appendChild(listElement);
+    				return false;
+    			}
+    		}
 		</script>
 		<style>
 			#header{
@@ -136,10 +218,10 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 			#enter{
 				width:50%;
 			}
-			#event {
+			.fancybox-inner {
 				background:#E0D6CC;
 			}
-			#change,#event{
+			#change{
 				display:-webkit-box;
 				-webkit-box-orient:horizontal;
 				-webkit-box-pack:center;
@@ -214,6 +296,34 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 			h1,form{
 				display:inline;
 			}
+			#error_explanation {
+				margin-left:auto;
+				margin-bottom:20px;
+  				width: 400px;                  
+  				border: 2px solid red;         
+  				padding: 7px;  
+  				padding-bottom: 12px;          
+  				background-color: #ECE6E0; 
+  				box-shadow: -10px 10px 5px #888888;    
+			}         
+			#error_explanation h2 {       
+			  	text-align: left;           
+			  	font-weight: bold;          
+				padding: 5px 5px 5px 15px;  
+				font-size: 12px;            
+				margin: -7px;               
+				background-color: #CC3300;  
+				color: #fff;                
+			}                              
+			#error_explanation p {        
+			  color: #333;                
+			  margin-bottom: 0;           
+			  padding: 5px;               
+			}                             
+			#error_explanation ul li {    
+			  font-size: 12px;            
+			  list-style: square;         
+			}                      
 			input,select,span.select{
 				-webkit-border-radius:5px; 
    				-moz-border-radius:5px; 
@@ -264,9 +374,9 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 						$beg=false;
 						?>
 						<div id="div<?php echo $row[Event_Id];?>">
-								<span class="eventName"><?php echo $row[Event_Name]; ?></span><span class="eventChange"><a id="fancy" href="#event"><input type="button" value="Edit" onclick="editEvent(<?php echo $row[Event_Id]; ?>,'edit')"></a><input type="button" value="Remove" onclick="removeEvent(<?php echo $row[Event_Id]; ?>)"></span><br>
+								<span class="eventName"><?php echo $row[Event_Name]; ?></span><span class="eventChange"><a id="fancy" href="#event"><input type="button" value="Edit" onclick="editEvent(<?php echo $row[Event_Id];?>)"></a><input type="button" value="Remove" onclick="removeEvent(<?php echo $row[Event_Id]; ?>)"></span><br>
 								<span class="eventDate"><?php echo date('n/d/Y',strtotime($row[Event_Date])); ?></span><span class="eventTime"><?php echo $row[Event_Time]; ?></span><br>
-								<span class="eventCityState"><?php echo $row[Event_City] ."," . $row[Event_State]; ?></span><?php echo ((!empty($row[Event_Location]))? "<span class=\"eventLocation\">Location:$row[Event_Location]</span>":"") ?><br>
+								<span class="eventCityState"><?php echo $row[Event_City] .", " . $row[Event_State]; ?></span><?php echo ((!empty($row[Event_Location]))? "<span class=\"eventLocation\">Location:&nbsp;$row[Event_Location]</span>":"") ?><br>
 						</div>
 					<?php
 					}
@@ -286,9 +396,11 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 
 
 			<div style="display:none;">	
-				<div id="event" >
-					<form name="formEvent" action="addUserEvent.php" method="post">
+					<form id="event" name="formEvent" action="" method="post">
+						<div id="error_explanation" style="display:none;">
+						</div>
 						<fieldset>
+								<input name="id" style="display:none;">
 								<label for="event">Name of Event</label><br>
 								<input class="field" size="50" name="event"><br><br>
 								
@@ -319,10 +431,13 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 								</select><br><br>
 
 								<label for="website">Website</label><br>
-								<input class="field" size="50" name="website"><br>
+								<input class="field" size="50" name="website">
+								<div style="text-align:center;">
+									<input type="submit" value="OK">
+								</div>
 						</fieldset>
 					</form>
-				</div>
+				
 			</div>
 
 			<div id="footer">

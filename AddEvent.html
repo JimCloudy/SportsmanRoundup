@@ -27,8 +27,8 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
         		});
         		$('#timepicker').timepicker({
         			//showOn: "button",
-        			pickerTimeFormat:"hh:mm tt",
-        			timeFormat: "hh:mm tt",
+        			pickerTimeFormat:"h:mm tt",
+        			timeFormat: "h:mm tt",
         			defaultValue : "12:00 am"
         			//buttonImage: "/images/clock-blue.png",
         			//buttonImageOnly: true
@@ -301,7 +301,7 @@ if(!(isset($_SESSION['username']) && !empty($_SESSION['username']))){
 			<br><br>
 
 			<div id="event" class="shadowArea">
-				<form name="formEvent" action="addUserEvent.php" method="post">
+				<form name="formEvent" action="addEvent.php" method="post">
 					<div class="form_wrapper">
 						<fieldset>
 							<label class="w75 inputselect" for="event">

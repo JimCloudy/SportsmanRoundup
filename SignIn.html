@@ -79,6 +79,9 @@ if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
 				-webkit-box-pack:center;
 				-webkit-box-align:center;
 			}
+			#userSignUp form {
+				width:50%;
+			}
 			#footer{
 				position:relative;
 				bottom:0;
@@ -88,12 +91,109 @@ if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
 			#header img{
 				height:6.25em;
 			}
-			#userSignUp label{
-				margin-right: 1em;
-				display:inline-block;
-				width:5em;
-				font-size:1.25em;
-				text-align: right;
+			#enter{
+				width:100%;
+			}
+			#userSubmit, #userCancel{
+				width:100px;
+				background-color:#FCFBFA;
+			}
+			#error_explanation {
+				margin-left:11%;
+				margin-bottom:20px;
+  				width: 400px;                  
+  				border: 2px solid red;         
+  				padding: 7px;  
+  				padding-bottom: 12px;          
+  				background-color: #ECE6E0; 
+  				box-shadow: -10px 10px 5px #888888;    
+			}         
+			#error_explanation h2 {       
+			  	text-align: left;           
+			  	font-weight: bold;          
+				padding: 5px 5px 5px 15px;  
+				font-size: 12px;            
+				margin: -7px;               
+				background-color: #CC3300;  
+				color: #fff;                
+			}                              
+			#error_explanation p {        
+			  color: #333;                
+			  margin-bottom: 0;           
+			  padding: 5px;               
+			}                             
+			#error_explanation ul li {    
+			  font-size: 12px;            
+			  list-style: square;         
+			}                                                    
+			.shadowArea{
+				margin:0 auto;
+				width:78%;
+				background:#E0D6CC;
+				border-radius:25px;
+				padding:1em 1em;
+				box-shadow: -10px 10px 5px #888888;
+			}
+			.error{
+				color:#CC3300;
+			}
+			#siteLinks a{
+				margin-left: 15px;
+			}
+			body{
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			h6,h1{
+				display:inline;
+			}
+			input,select,span.select{
+				-webkit-border-radius:5px; 
+   				-moz-border-radius:5px; 
+   				border-radius:5px; 
+   				-webkit-box-shadow:-5px 5px 5px #9D968F; 
+   				-moz-box-shadow:-5px 5px 5px #9D968F; 
+   				box-shadow:-5px 5px 5px #9D968F; 
+			}
+		</style> 
+	<!--	<style>
+			#header{
+				width:100%;
+				margin:0 auto;
+				margin-bottom: 100px;
+				border-bottom:solid;
+				border-color:black;
+				background:#5C8533;
+				color:white;
+			}
+			#roundup{
+				max-width:56.25em;
+				margin:0 auto;
+			}
+			#content{
+				max-width:56.25em;
+				margin:0px auto;
+				padding:0 1em;
+			
+			}
+			#info, #enter{
+				text-align: center;
+			}
+			#userSignUp{
+				display:-webkit-box;
+				-webkit-box-orient:horizontal;
+				-webkit-box-pack:center;
+				-webkit-box-align:center;
+			}
+			#footer{
+				position:relative;
+				bottom:0;
+				margin-top:50px;
+				text-align:right;
+			}
+			#header img{
+				height:6.25em;
 			}
 			#enter{
 				width:50%;
@@ -149,7 +249,7 @@ if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
 				padding:0;
 				border:0;
 			}
-			h6,form,h1{
+			h6,h1{
 				display:inline;
 			}
 			input,select,span.select{
@@ -159,6 +259,94 @@ if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
    				-webkit-box-shadow:-5px 5px 5px #9D968F; 
    				-moz-box-shadow:-5px 5px 5px #9D968F; 
    				box-shadow:-5px 5px 5px #9D968F; 
+			}
+		</style> -->
+		<style>
+			div.form_wrapper {
+				margin: 0 -1%;
+				padding: 0;
+			}
+			fieldset {
+				clear: both;
+				margin: 0 0 20px 0;
+				padding: 0;
+				border: 0;
+			}
+			label {
+				margin: 0 1%;
+				padding: 0;
+				border: 0;
+				float: left;
+				display: table;
+				width: 1%;
+			}
+			label.w10 {
+				width: 23%;
+				display: block;
+			}
+			label.w25 {
+				width: 33%;
+				display: block;
+			}
+			label.w50 {
+				width: 73%;
+				display: block;
+			}
+			label.w75 {
+				width: 98%;
+				display: block;
+			}
+			label.inputselect span.title {
+				margin: 0 0 2px 0;
+				display: table; /* act as inline-block */
+				color: #5C8533;
+				font-size: 1.5em;
+			}
+			label input.field,
+		        label select.field {
+				width: 100%;
+				display: block;
+				border: 1px solid #d0d6da;
+				border-left: 3px solid #5C8533;
+				background: white;
+				padding: 4px;
+				font-family: sans-serif; font-size: 1em;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box; /* gecko */
+				-webkit-box-sizing: border-box; /* khtml/webkit */
+				-ms-box-sizing: border-box; /* IE */
+			}
+			label input.field:focus, label select.field:focus, label input.field:hover, label select.field:hover {
+				background : #EFF3EB;
+    			color : black; 
+    		}
+			label select.field {
+				padding: 4px 1px 1px 1px; /* have to try out */
+			}
+			label br {
+				margin: 0 0 2px 0;
+			}
+			span.wrapper {
+				margin: 0;
+				padding: 0;
+				display: table-cell;
+				width: 1%; /* firefox */
+			}
+			input.select {
+				display: block;
+				float: left;
+				margin: 0;
+			}
+			.clear {
+				clear: both;
+				display: block;
+				padding: 0 0 10px 0;
+			}
+			p {
+				margin: 0 1% 10px 1%;
+			}
+			p.added {
+				color: #CC3300;
 			}
 		</style>
 	</head>
@@ -182,12 +370,30 @@ if((isset($_SESSION['username']) && !empty($_SESSION['username']))){
 			</div>
 			<div id="userSignUp" class="shadowArea">
 				<form name="user" action="signIn.php" method="POST">
-					<label>User Name</label><input name="userName"></br>
-					<label>Password</label><input name="userPassword" type="password"><br>
+					<div class="form_wrapper">
+						<fieldset>
+							<label class="w50 inputselect" for="userName">
+								<span class="wrapper">
+									<span class="title">User Name</span>
+							   	    <input class="field" name="userName">
+								</span>
+							</label>
+
+							<label class="w50 inputselect" for="userPassword">
+								<span class="wrapper">
+									<span class="title">Password</span>
+									<input class="field" name="userPassword" type="password">
+								</span>
+							</label>
+
+							<div class="clear"></div>
+
+							<div id="enter">
+								<input type="button" name="userSubmit" value="Sign In" onclick="validate()" style="margin-left:auto;"><input type="button" name="userCancel" value="Cancel" onclick="location.		href='Events.html'">					
+							</div>
+						</fieldset>
+					</div>
 				</form>
-				<div style="margin-left:1em;">
-					<input type="button" name="userSubmit" value="Sign In" onclick="validate()" style="margin-left:auto;"><input type="button" name="userCancel" value="Cancel" onclick="location.href='Events.html'">				
-				</div>
 			</div>			
 			<div id="footer">
 				<h6>2012 A Postmaster Production</h6>
