@@ -1,9 +1,6 @@
 <?php
 session_start();
-$mysql_host = "mysql5.000webhost.com";
-$mysql_database = "a3940063_roundup";
-$mysql_user = "a3940063_cloudy";
-$mysql_password = "6doubles";
+include 'databaseVars.php';
 ?>
 <html>
 	<head>
@@ -99,6 +96,9 @@ $mysql_password = "6doubles";
 		<div id="header">
 			<div id="roundup">
 				<img src="/images/roundup.jpg"/><h1>SPORTSMAN ROUNDUP</h1>
+				<?php if(!$_SESSION['username']){?>
+				<span id="signUpBtn" style="float:right;width:100px;"><a href="SignUp.html"><img src="/images/Sign_Up.png"/></a></span>
+				<?php }?>
 				<br>
 				<span id="siteLinks"><?php if(!$_SESSION['username']){?><a href="SignUp.html">Sign Up</a><a href="SignIn.html">Sign In</a><?php }?><?php if($_SESSION['username']){?><a href="AddEvent.html">Add Event</a><a href="UserProfile.html">My Profile</a><a href="signOut.php">Sign Out</a><?php }?></span>
 			</div>
@@ -126,14 +126,14 @@ $mysql_password = "6doubles";
 						echo "<div onclick=\"location.href='http://$row[Event_Website]'\">
 						<span class=\"eventName\">$row[Event_Name]</span><br>
 						<span class=\"eventDate\">" . date('n/d/Y',strtotime($row[Event_Date])) . "</span><span class=\"eventTime\">$row[Event_Time]</span><br>
-						<span class=\"eventCityState\">$row[Event_City],&nbsp;$row[Event_State]</span>" . ((!empty($row[Event_Location]))?"<span class=\"eventLocation\">Location:&nbsp;$row[Event_Location]</span>":"") . 
-						"<br></div>";
+						<span class=\"eventCityState\">$row[Event_City],&nbsp;$row[Event_State]</span>" . ((!empty($row[Event_Location]))?"<span class=\"eventLocation\">Location:&nbsp;$row[Event_Location]</span>":"") . "<br></div>";
 					}
 					mysql_close($con);
 					if(!$beg){
 						echo "</div>";
 					}
 				?>
+				<input type='button' onclick="alert(<?php echo get_magic_quotes_gpc(); ?>)">
 			<div id="footer">
 				<h6>2012 A Postmaster Production</h6>
 			</div>
